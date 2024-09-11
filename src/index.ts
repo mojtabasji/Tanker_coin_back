@@ -1,0 +1,49 @@
+// src/index.ts
+import express from 'express';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
+import userRoutes from './routes/user'; // Import user routes
+import authRoutes from './routes/auth'; // Import auth routes
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Swagger definition
+const swaggerOptions = {
+    definition: {
+        openapi: "3.0.0", // Specify the OpenAPI version
+        info: {
+            title: "My API",
+            version: "1.0.0",
+            description: "API documentation for my Express app",
+        },
+    },
+    apis: ["./src/routes/*.ts"], // Path to your API docs
+};
+
+// Initialize Swagger JSDoc
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+// Serve Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/api', userRoutes);
+app.use('/api', authRoutes);
+
+// Example route
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     description: Welcome to the API
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+app.get('/', (req, res) => {
+    res.send('Hello, API!');
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`API documentation available at http://localhost:${PORT}/api-docs`);
+});
