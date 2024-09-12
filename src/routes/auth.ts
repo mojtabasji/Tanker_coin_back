@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import validators from '../utils/validator';
 import userOptions from '../utils/user';
-import { type Tg_User, type App_User } from '../utils/Types'; 
+import { type App_User, WebAppInitData, WebAppUser } from '../utils/Types'; 
 
 const router = Router();
 
@@ -11,16 +11,24 @@ const router = Router();
  * /api/login:
  *  post:
  *    description: check if user is registered in the database and login user and set session token
+ *    summary: Login user
  *    requestBody:
+ *      description: Optional description in *Markdown*
  *      required: true
  *      content:
- *          application/json:
+ *        application/json:
  *          schema:
- *              type: object
- *              properties:
- *                  name:
- *                      type: string
- *                      example: John Doe
+ *            type: string
+ *            example: { "initData": "auth_date=1620000000\nfirst_name=John\nhash=hash", friend_id: "123456789" }
+ *        application/xml:
+ *          schema:
+ *            type: string
+ *        application/x-www-form-urlencoded:
+ *          schema:
+ *            type: string
+ *        text/plain:
+ *          schema:
+ *            type: string
  *    responses:
  *      201:
  *          description: User Logged in successfully
@@ -29,18 +37,28 @@ const router = Router();
  *      500:
  *          description: Internal server error
  */
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     // Your logic to login a user
-    let user: App_User;
-    const temporal_user: Tg_User = { id: 1, username: 'John Doe' }; // dummy user - replace with your logic with req.body
-    if( userOptions.checkUserExists(temporal_user) ) {
-        user = userOptions.getUser(temporal_user);
+    let tg_user: WebAppUser;
+    let app_user: App_User;
+
+    const initData = req.body.initData;
+    const friend_id = req.body.friend_id;
+
+    let {isValid, data} = validators.ValidateData(initData, 0);
+    if(isValid) {
+        tg_user = data.user;
+        if(await userOptions.checkUserExists(tg_user)) {
+            app_user = await userOptions.getUser(tg_user);
+        } else {
+            app_user = await userOptions.createUserComplete(tg_user, friend_id);    
+        }
+        const session_token = userOptions.createSessionToken(app_user);
+        res.cookie('session_token', session_token, { httpOnly: true });
+        res.status(201).json({ app_user, session_token });
     } else {
-        user = userOptions.createUser(temporal_user);
+        res.status(400).json({ error: 'Invalid user' });        
     }
-    const session_token = userOptions.createSessionToken(user);
-    res.cookie('session_token', session_token, { httpOnly: true });
-    res.status(201).json({ user, session_token });
 });
 
 export default router;
