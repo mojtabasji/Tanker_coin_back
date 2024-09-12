@@ -5,7 +5,7 @@ interface App_User {
   tg_id: number;
   first_name: string;
   username?: string;
-  gameData?: GameData;
+  gameData?: number;
   friends: number[];
 }
 

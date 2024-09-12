@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { type App_User, WebAppUser, } from './Types';
+import { type App_User, WebAppUser, GameData } from './Types';
 import * as crypto from 'crypto';
 import User from '../modules/user';
+import Game from '../modules/game';
 
 export default class UserOptions {
     static async createUserComplete(user: WebAppUser, friend_id: string | null = null): Promise<App_User> {
@@ -18,6 +19,11 @@ export default class UserOptions {
                 friend.friends = User.convertFriendsToArray(friend.friends as any);
                 friend.friends.push(newUser.id);
                 friend = await User.updateUser(friend);
+                if (friend.gameData) {
+                    let friend_game: GameData = await Game.getGameDataById(friend.gameData);
+                    friend_game.coins += 100;
+                    friend_game = await Game.updateGameData(friend_game);
+                }
             }
         }
         return newUser;
