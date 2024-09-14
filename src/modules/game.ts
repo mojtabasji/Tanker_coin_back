@@ -37,7 +37,7 @@ export default class Game {
 
     // create a new game data
     static async createGameData(gameData: GameData): Promise<GameData> {
-        const query = `INSERT INTO game (mineable, coins, power, activeTanker, unlockedTankers, lastUpdate) VALUES (${gameData.mineable}, ${gameData.coins}, ${gameData.power}, ${gameData.activeTanker.id}, ${JSON.stringify(gameData.unlockedTankers)}, ${gameData.lastUpdate})`;
+        const query = `INSERT INTO game (mineable, coins, power, activeTanker, unlockedTankers, lastUpdate) VALUES (${gameData.mineable}, ${gameData.coins}, ${gameData.power}, ${gameData.activeTanker.id}, '${JSON.stringify(gameData.unlockedTankers)}', ${gameData.lastUpdate})`;
         await database.query(query);
         let newGameData: GameData = await Game.getLatestGameData();
         return newGameData;

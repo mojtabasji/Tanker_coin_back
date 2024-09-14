@@ -1,8 +1,11 @@
 import { Router, Request, Response } from 'express';
 import validators from '../utils/validator';
+import { sessionCheck } from '../middleware/auth';
 
 const router = Router();
 
+
+router.use('/users', sessionCheck);
 /**
  * @swagger
  * /api/users:
@@ -42,7 +45,7 @@ router.get('/users', (req: Request, res: Response) => {
  */
 router.post('/users', (req, res) => {
     // Your logic to create a new user in the database
-    const newUser = { id: 2, name: 'Jane Doe' };
+    const newUser = [{ id: 2, name: 'Jane Doe' }];
     res.status(201).json(newUser);
 });
 

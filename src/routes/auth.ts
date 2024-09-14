@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import validators from '../utils/validator';
 import userOptions from '../utils/user';
+import Session from '../modules/session';
 import { type App_User, WebAppInitData, WebAppUser } from '../utils/Types'; 
 
 const router = Router();
@@ -53,9 +54,9 @@ router.post('/login', async (req, res) => {
         } else {
             app_user = await userOptions.createUserComplete(tg_user, friend_id);    
         }
-        const session_token = userOptions.createSessionToken(app_user);
-        res.cookie('session_token', session_token, { httpOnly: true });
-        res.status(201).json({ app_user, session_token });
+        const session: Session = await Session.createSession(app_user);
+        res.cookie('session_token', session.sessionToken, { httpOnly: true });
+        res.status(201).json({ app_user, session_token: session.sessionToken });
     } else {
         res.status(400).json({ error: 'Invalid user' });        
     }

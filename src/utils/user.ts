@@ -48,13 +48,5 @@ export default class UserOptions {
         }
     }
 
-    static createSessionToken(user: App_User) {
-        // Your logic to create a session token
-        let salt = process.env.SESSION_SALT || '';
-        let session_string = `${user.id}-${user.first_name}-${salt}`;
-
-        // todo: should store it in session Table
-
-        return crypto.createHash('sha256').update(session_string).digest('hex');
-    }
+    
 }
