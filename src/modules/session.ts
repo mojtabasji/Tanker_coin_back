@@ -1,6 +1,7 @@
 import database from "./database";
 import crypto from 'crypto';
 import { App_User } from "../utils/Types";
+import User from "./user";
 
 
 class Session {
@@ -73,6 +74,13 @@ class Session {
             return false;
         }
         return true;
+    }
+
+    static async getUserBySessionToken(sessionToken: string): Promise<App_User | null> {
+        // Your logic to get a user by session token
+        const user = await database.query(`SELECT * FROM sessions WHERE sessionToken = '${sessionToken}'`);
+        if (user.length === 0) return null;
+        return await User.getUserById(user[0].userId);
     }
 }
 

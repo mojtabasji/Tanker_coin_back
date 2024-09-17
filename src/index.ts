@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import userRoutes from './routes/user'; // Import user routes
 import authRoutes from './routes/auth'; // Import auth routes
+import API_V1 from './routes/v1'; // Import API v1 routes
 
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -27,13 +28,15 @@ const swaggerOptions = {
 // Initialize Swagger JSDoc
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-app.use(express.json());app.use(cookieParser());
+app.use(express.json());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));  // for serving static files
 // Serve Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/api', userRoutes);
 app.use('/api', authRoutes);
+app.use('/api/v1', API_V1);
 
 // Example route
 /**

@@ -14,7 +14,7 @@ interface GameData {
   mineable: boolean;
   coins: number;
   power: number;
-  activeTanker: TankerType;
+  activeTanker: TankerType | number;
   unlockedTankers: number[];
   lastUpdate: number;
 }

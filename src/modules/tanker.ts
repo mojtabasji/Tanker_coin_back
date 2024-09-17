@@ -22,10 +22,10 @@ export default class Tanker {
     }
 
     // get tanker by id
-    static async getTankerById(tankerId: number): Promise<Tanker | null> {
+    static async getTankerById(tankerId: number): Promise<Tanker> {
         const query = `SELECT * FROM tankers WHERE id = ${tankerId}`;
         const rows: Array<Tanker> = await database.query(query);
-        return rows.length ? rows[0] : null;
+        return rows[0];
     }
 
     // get all tankers

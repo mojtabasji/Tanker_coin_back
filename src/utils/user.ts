@@ -3,6 +3,7 @@ import { type App_User, WebAppUser, GameData } from './Types';
 import * as crypto from 'crypto';
 import User from '../modules/user';
 import Game from '../modules/game';
+import Session from '../modules/session';
 
 export default class UserOptions {
     static async createUserComplete(user: WebAppUser, friend_id: string | null = null): Promise<App_User> {
@@ -48,5 +49,8 @@ export default class UserOptions {
         }
     }
 
+    static async getAuthenticatedUser(token: string): Promise<App_User | null> {
+        return Session.getUserBySessionToken(token);
+    }
     
 }
