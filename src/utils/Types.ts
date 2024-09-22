@@ -69,7 +69,13 @@ interface TankerType {
   name?: string,
 }
 
+interface NetworkStatus {
+  UserCount: number,
+  extractedCoins: number,
+}
+
+
 export {
-  App_User,
+  App_User, NetworkStatus,
   GameData, ValidateDataResponse, WebAppUser, WebAppChat, WebAppInitData, TankerType
 };

@@ -1,6 +1,6 @@
 // user module to manage communications with database
 import database from './database';
-import { App_User, GameData } from '../utils/Types';
+import { App_User, GameData, NetworkStatus } from '../utils/Types';
 import Game from './game';
 
 export default class User {
@@ -40,6 +40,14 @@ export default class User {
         return await database.query(query);
     }
 
+    static async getPagedUsersOrderByGameScore(page: number = 1, limit: number = 10): Promise<Array<App_User>> {
+        const offset = (page - 1) * limit;
+        // join users and game tables
+        const query = `SELECT * FROM users inner join game on users.gameData = game.id ORDER BY game.coins DESC LIMIT ${limit} OFFSET ${offset}`;
+        return await database.query(query);
+    }
+
+
     // create a new user
     static async createUser(user: App_User): Promise<App_User> {
         let newGame: GameData = new Game();
@@ -61,6 +69,15 @@ export default class User {
     // convert friends to array
     static convertFriendsToArray(friends: string): number[] {
         return JSON.parse(friends);
+    }
+
+    static async networkState(): Promise<NetworkStatus> {
+        let usersCount = await database.query('SELECT COUNT(*) FROM users');
+        let coinsCount = await database.query('SELECT SUM(coins) FROM game');
+        return {
+            UserCount: usersCount[0]['COUNT(*)'],
+            extractedCoins: typeof coinsCount[0]['SUM(coins)'] === 'number' ? coinsCount[0]['SUM(coins)'] : parseInt(coinsCount[0]['SUM(coins)']),
+        }
     }
 
 }

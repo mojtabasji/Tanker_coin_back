@@ -1,6 +1,7 @@
 import database from "./database";
 import Tanker from "./tanker";
 import { GameData, TankerType } from "../utils/Types";
+import User from "./user";
 
 export default class Game {
     tableName: string = 'game';
@@ -44,9 +45,21 @@ export default class Game {
     }
 
     // update game data
-    static async updateGameData(gameData: GameData): Promise<GameData> {
-        const query = `UPDATE game SET mineable = ${gameData.mineable}, coins = ${gameData.coins}, power = ${gameData.power}, activeTanker = ${gameData.mineable}, ${gameData.coins}, ${gameData.power}, ${typeof gameData.activeTanker != "number" ? gameData.activeTanker.id: gameData.activeTanker}, unlockedTankers = ${JSON.stringify(gameData.unlockedTankers)}, lastUpdate = ${gameData.lastUpdate} WHERE id = ${gameData.id}`;
+    static async updateGameData(gameData: GameData, userID: number): Promise<GameData | string> {
+        let user = await User.getUserById(userID);
+        if (user.gameData != gameData.id) {
+            return "User does not own this game data";
+        }
+        const query = `UPDATE game SET mineable = ${gameData.mineable}, coins = ${gameData.coins}, power = ${gameData.power}, activeTanker = ${typeof gameData.activeTanker != "number" ? gameData.activeTanker.id: gameData.activeTanker}, unlockedTankers = ${JSON.stringify(gameData.unlockedTankers)}, lastUpdate = ${gameData.lastUpdate} WHERE id = ${gameData.id}`;
         await database.query(query);
         return gameData;
+    }
+
+    static async saveGameData(gameData: GameData, userID: number): Promise<GameData | string> {
+        if (gameData.id) {
+            return await Game.updateGameData(gameData, userID);
+        } else {
+            return await Game.createGameData(gameData);
+        }
     }
 }

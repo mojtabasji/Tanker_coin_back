@@ -23,7 +23,7 @@ export default class UserOptions {
                 if (friend.gameData) {
                     let friend_game: GameData = await Game.getGameDataById(friend.gameData);
                     friend_game.coins += 100;
-                    friend_game = await Game.updateGameData(friend_game);
+                    friend_game = await Game.updateGameData(friend_game, friend.id) as GameData;
                 }
             }
         }
