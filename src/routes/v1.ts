@@ -164,7 +164,10 @@ router.get('/loadGame', async (req: Request, res: Response) => {
         const tanker = await Tanker.getTankerById(gameData.activeTanker);
         gameData.activeTanker = tanker;
     }
-    res.json({ gameData });
+    res.json({ 
+        gameData: gameData,
+        gameUser: user
+    });
 });
 
 
