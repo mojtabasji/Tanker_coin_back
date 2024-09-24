@@ -148,6 +148,10 @@ router.use('*', sessionCheck);
  *        properties:
  *         gameData:
  *          $ref: '#/components/schemas/Game'
+ *         tankers:
+ *          type: array
+ *          items:
+ *           $ref: '#/components/schemas/Tanker'
  *    '400':
  *      description: Bad request
  *    '500':
@@ -164,9 +168,11 @@ router.get('/loadGame', async (req: Request, res: Response) => {
         const tanker = await Tanker.getTankerById(gameData.activeTanker);
         gameData.activeTanker = tanker;
     }
+    const tankers = await Tanker.getAllTankers();
     res.json({ 
         gameData: gameData,
-        gameUser: user
+        gameUser: user,
+        tankers: tankers
     });
 });
 
