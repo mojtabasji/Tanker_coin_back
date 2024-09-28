@@ -38,19 +38,23 @@ export default class Game {
 
     // create a new game data
     static async createGameData(gameData: GameData): Promise<GameData> {
-        const query = `INSERT INTO game (mineable, coins, power, activeTanker, unlockedTankers, lastUpdate) VALUES (${gameData.mineable}, ${gameData.coins}, ${gameData.power}, ${typeof gameData.activeTanker != "number" ? gameData.activeTanker.id: gameData.activeTanker }, '${JSON.stringify(gameData.unlockedTankers)}', ${gameData.lastUpdate})`;
+        const query = `INSERT INTO game (mineable, coins, power, activeTanker, unlockedTankers, lastUpdate) VALUES (${gameData.mineable}, ${gameData.coins}, ${gameData.power}, ${typeof gameData.activeTanker != "number" ? gameData.activeTanker.id : gameData.activeTanker}, '${JSON.stringify(gameData.unlockedTankers)}', ${gameData.lastUpdate})`;
         await database.query(query);
         let newGameData: GameData = await Game.getLatestGameData();
         return newGameData;
     }
 
     // update game data
-    static async updateGameData(gameData: GameData, userID: number): Promise<GameData | string> {
+    static async updateGameData(gameData: GameData, userID: number, approach: string | null = null): Promise<GameData | string> {
         let user = await User.getUserById(userID);
         if (user.gameData != gameData.id) {
             return "User does not own this game data";
         }
-        const query = `UPDATE game SET mineable = ${gameData.mineable}, coins = ${gameData.coins}, power = ${gameData.power}, activeTanker = ${typeof gameData.activeTanker != "number" ? gameData.activeTanker.id: gameData.activeTanker}, unlockedTankers = ${JSON.stringify(gameData.unlockedTankers)}, lastUpdate = ${gameData.lastUpdate} WHERE id = ${gameData.id}`;
+        let query: string;
+        if (approach && approach == "coin_increase")
+            query = `UPDATE game SET mineable = ${gameData.mineable}, coins = ${gameData.coins}, power = ${gameData.power}, activeTanker = ${typeof gameData.activeTanker != "number" ? gameData.activeTanker.id : gameData.activeTanker}, unlockedTankers = ${JSON.stringify(gameData.unlockedTankers)}, lastUpdate = ${gameData.lastUpdate} WHERE id = ${gameData.id} AND coins <= ${gameData.coins}`;
+        else
+            query = `UPDATE game SET mineable = ${gameData.mineable}, coins = ${gameData.coins}, power = ${gameData.power}, activeTanker = ${typeof gameData.activeTanker != "number" ? gameData.activeTanker.id : gameData.activeTanker}, unlockedTankers = ${JSON.stringify(gameData.unlockedTankers)}, lastUpdate = ${gameData.lastUpdate} WHERE id = ${gameData.id}`;
         await database.query(query);
         return gameData;
     }

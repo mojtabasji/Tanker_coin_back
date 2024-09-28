@@ -66,6 +66,12 @@ export default class User {
         return updatedUser;
     }
 
+    // getFriends
+    static async getFriends(friend_list: number[]): Promise<Array<App_User>> {
+        const query = `SELECT users.id, users.first_name, game.coins FROM users inner join game on users.gameData = game.id WHERE users.id IN (${friend_list.join(',')})`;
+        return await database.query(query);
+    }
+
     // convert friends to array
     static convertFriendsToArray(friends: string): number[] {
         return JSON.parse(friends);

@@ -280,7 +280,8 @@ router.post('/updateGame', async (req: Request, res: Response) => {
         return res.status(401).json({ error: 'Unauthorized' });
     }
     const gameData: GameData = req.body.gameData;
-    Game.updateGameData(gameData, user.id).then((gameData) => {
+    const approach: string | null = req.body.approach;
+    Game.updateGameData(gameData, user.id, approach).then((gameData) => {
         if (typeof gameData === 'string') {
             res.status(400).json({ error: gameData });
         }
@@ -320,12 +321,8 @@ router.get('/getFriends', async (req: Request, res: Response) => {
     }
     let friends: App_User[] = [];
     let user_friends: number[] = User.convertFriendsToArray(user.friends as any);
-    for (let friendId of user_friends) {
-        let friend: App_User | null = await User.getUserById(friendId);
-        if (friend) {
-            friends.push(friend);
-        }
-    }
+
+    friends = await User.getFriends(user_friends);
     res.json(friends);
 });
 
