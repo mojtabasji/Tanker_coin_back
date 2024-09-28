@@ -43,7 +43,7 @@ export default class User {
     static async getPagedUsersOrderByGameScore(page: number = 1, limit: number = 10): Promise<Array<App_User>> {
         const offset = (page - 1) * limit;
         // join users and game tables
-        const query = `SELECT * FROM users inner join game on users.gameData = game.id ORDER BY game.coins DESC LIMIT ${limit} OFFSET ${offset}`;
+        const query = `SELECT users.id, users.first_name, game.coins FROM users inner join game on users.gameData = game.id ORDER BY game.coins DESC LIMIT ${limit} OFFSET ${offset}`;
         return await database.query(query);
     }
 

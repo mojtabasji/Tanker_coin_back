@@ -130,6 +130,18 @@ router.use('*', sessionCheck);
  *                  extractedCoins:
  *                      type: number
  *                      example: 0
+ *          Rank:
+ *              type: object
+ *              properties:
+ *                  id: 
+ *                      type: number
+ *                      example: 1
+ *                  first_name:
+ *                      type: string
+ *                      example: 'johannes'
+ *                  coins:
+ *                      type: number
+ *                      example: 120
  */
 
 
@@ -346,7 +358,7 @@ router.get('/getFriends', async (req: Request, res: Response) => {
  *                      schema:
  *                          type: array
  *                          items:
- *                              $ref: '#/components/schemas/User'
+ *                              
  *          400:
  *              description: Bad request
  *          500:
