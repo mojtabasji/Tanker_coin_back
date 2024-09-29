@@ -68,6 +68,9 @@ export default class User {
 
     // getFriends
     static async getFriends(friend_list: number[]): Promise<Array<App_User>> {
+        if (friend_list.length === 0) {
+            return [];
+        }
         const query = `SELECT users.id, users.first_name, game.coins FROM users inner join game on users.gameData = game.id WHERE users.id IN (${friend_list.join(',')})`;
         return await database.query(query);
     }

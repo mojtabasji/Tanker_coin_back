@@ -386,9 +386,7 @@ router.get('/getUsersList', (req: Request, res: Response) => {
  *                  description: Internal server error
  */
 router.get('/getNetworkState', (req: Request, res: Response) => {
-    console.log("getNetworkState");
     User.networkState().then((state) => {
-        console.log("network state:", state);
         res.json(state);
     }).catch((err) => {
         console.error(err);
